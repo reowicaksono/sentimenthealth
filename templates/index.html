@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .result, .loading {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e7f3e7;
+            border-radius: 10px;
+            border: 1px solid #4CAF50;
+        }
+
+        .result h2 {
+            color: #333;
+        }
+
+        .result ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .result li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .result li strong {
+            color: #4CAF50;
+        }
+
+        .loading {
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+    <script>
+        function showLoadingMessage() {
+            // Hide the prediction results, if they exist
+            const resultDiv = document.getElementById("result");
+            if (resultDiv) {
+                resultDiv.style.display = "none";
+            }
+
+            // Show the loading message
+            const loadingDiv = document.getElementById("loadingMessage");
+            loadingDiv.style.display = "block";
+
+            // Add a delay of 2 seconds before submitting the form
+            setTimeout(function() {
+                document.getElementById("sentimentForm").submit();
+            }, 2000);
+
+            // Prevent default form submission to add the delay
+            return false;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis Input</h1>
+        <form id="sentimentForm" action="/predict" method="post" onsubmit="return showLoadingMessage()">
+            <label for="user_input">Enter your text:</label>
+            <textarea id="user_input" name="user_input" rows="4" cols="50" placeholder="Type your thoughts here..."></textarea>
+            <input type="submit" value="Analyze Sentiment">
+        </form>
+
+        <!-- Loading Message -->
+        <div id="loadingMessage" class="loading" style="display: none;">
+            Processing your input, please wait...
+        </div>
+
+        <!-- Prediction Results -->
+        {% if predictions %}
+            <div id="result" class="result">
+                <h2>Predicted Sentiments:</h2>
+                <ul>
+                    {% for model_name, prediction in predictions.items() %}
+                        <li><strong>{{ model_name }}:</strong> {{ prediction }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
